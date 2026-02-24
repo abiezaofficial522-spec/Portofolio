@@ -332,7 +332,7 @@ loaderStyle.textContent = `
         width: 50px;
         height: 50px;
         border: 4px solid #f3f3f3;
-        border-top: 4px solid #6366f1;
+        border-top: 4px solid #b50000;
         border-radius: 50%;
         animation: spin 1s linear infinite;
     }
