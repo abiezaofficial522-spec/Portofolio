@@ -253,7 +253,7 @@ cursorStyle.textContent = `
         position: fixed;
         width: 40px;
         height: 40px;
-        border: 2px solid #6366f1;
+        border: 2px solid #b50000;
         border-radius: 50%;
         pointer-events: none;
         z-index: 9999;
@@ -265,7 +265,7 @@ cursorStyle.textContent = `
         position: fixed;
         width: 8px;
         height: 8px;
-        background: #6366f1;
+        background: #b50000;
         border-radius: 50%;
         pointer-events: none;
         z-index: 9999;
