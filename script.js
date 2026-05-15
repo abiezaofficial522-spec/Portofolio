@@ -350,22 +350,6 @@ loaderStyle.textContent = `
 `;
 document.head.appendChild(loaderStyle);
 
-// Contact Form Submission
-contactForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const formData = new FormData(contactForm);
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const subject = formData.get('subject');
-    const message = formData.get('message');
-    
-    // Show success message (in real scenario, you would send this to a server)
-    alert(`Terima kasih ${name}! Pesan Anda telah dikirim. Saya akan menghubungi Anda di ${email} segera.`);
-    
-    contactForm.reset();
-});
-
 // Handle window resize for responsive adjustments
 let resizeTimer;
 window.addEventListener('resize', () => {
