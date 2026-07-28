@@ -1,5 +1,7 @@
 // Check for reduced motion preference
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
+const hasFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
 // DOM Elements
 const navbar = document.querySelector('.navbar');
@@ -192,8 +194,6 @@ if (!prefersReducedMotion) {
 }
 
 // Custom Cursor (respects reduced motion and mobile)
-const isMobile = window.innerWidth <= 768 || 'ontouchstart' in window;
-
 if (!prefersReducedMotion && !isMobile) {
     const cursor = document.createElement('div');
     cursor.classList.add('custom-cursor');
@@ -363,4 +363,191 @@ window.addEventListener('resize', () => {
 // Initialize VH variable for mobile browsers
 document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
 
-console.log('Portfolio website loaded successfully!');
+/* ============================================================
+   3D Tilt Effect
+   Rotates an element in 3D based on where the cursor is inside
+   it, giving a "physical card" feel. Skipped on touch devices
+   and when the user prefers reduced motion.
+   ============================================================ */
+function initTilt(elements, options = {}) {
+    if (prefersReducedMotion || !hasFinePointer || isMobile) return;
+
+    const {
+        max = 12,        // max rotation in degrees
+        scale = 1.03,     // scale on hover
+        liftY = -8,       // px to lift on hover
+        perspectiveVal = 900
+    } = options;
+
+    elements.forEach(el => {
+        let rect = null;
+
+        el.addEventListener('mouseenter', () => {
+            rect = el.getBoundingClientRect();
+        });
+
+        el.addEventListener('mousemove', (e) => {
+            if (!rect) rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const rotateY = ((x / rect.width) - 0.5) * max * 2;
+            const rotateX = ((y / rect.height) - 0.5) * -max * 2;
+
+            el.style.transform =
+                `perspective(${perspectiveVal}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(${liftY}px) scale3d(${scale}, ${scale}, ${scale})`;
+        });
+
+        el.addEventListener('mouseleave', () => {
+            rect = null;
+            el.style.transform = '';
+        });
+    });
+}
+
+// Apply tilt to the hero photo (gentle, no lift/scale so the layered
+// shapes behind it reveal depth instead of the whole thing jumping)
+const heroImageWrapper = document.querySelector('.hero-image .tilt-element');
+if (heroImageWrapper) {
+    initTilt([heroImageWrapper], { max: 10, scale: 1, liftY: 0, perspectiveVal: 700 });
+}
+
+// Apply tilt to the about photo
+const aboutImageWrapper = document.querySelector('.about-image.tilt-element');
+if (aboutImageWrapper) {
+    initTilt([aboutImageWrapper], { max: 8, scale: 1.02, liftY: 0, perspectiveVal: 900 });
+}
+
+// Apply tilt to skill cards and project cards
+initTilt(document.querySelectorAll('.skill-card.tilt-element'), { max: 10, scale: 1.03, liftY: -10 });
+initTilt(document.querySelectorAll('.project-card.tilt-element'), { max: 8, scale: 1.02, liftY: -10 });
+
+/* ============================================================
+   3D Hero Background (Three.js)
+   A field of slow-spinning wireframe shapes that drifts gently
+   with the mouse. Purely decorative, so any failure here (no
+   WebGL, library blocked, etc.) is caught and just skipped.
+   ============================================================ */
+function initHeroBackground() {
+    if (prefersReducedMotion) return;
+
+    const canvas = document.getElementById('hero-canvas');
+    const hero = document.querySelector('.hero');
+    if (!canvas || !hero || typeof THREE === 'undefined') return;
+
+    try {
+        let width = hero.clientWidth;
+        let height = hero.clientHeight;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+        camera.position.z = 30;
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setSize(width, height);
+
+        const group = new THREE.Group();
+        scene.add(group);
+
+        const geometries = [
+            new THREE.IcosahedronGeometry(2.2, 0),
+            new THREE.TorusGeometry(1.6, 0.5, 8, 16),
+            new THREE.OctahedronGeometry(1.8, 0),
+            new THREE.TetrahedronGeometry(2, 0)
+        ];
+
+        const colors = [0xb50000, 0xcd2626, 0x161516, 0xcd0000];
+        const shapeCount = isMobile ? 6 : 14;
+        const meshes = [];
+
+        for (let i = 0; i < shapeCount; i++) {
+            const geo = geometries[i % geometries.length];
+            const mat = new THREE.MeshBasicMaterial({
+                color: colors[i % colors.length],
+                wireframe: true,
+                transparent: true,
+                opacity: 0.35
+            });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(
+                (Math.random() - 0.5) * 42,
+                (Math.random() - 0.5) * 26,
+                (Math.random() - 0.5) * 18 - 4
+            );
+            mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+
+            mesh.userData = {
+                rotSpeedX: 0.002 + Math.random() * 0.004,
+                rotSpeedY: 0.0015 + Math.random() * 0.003,
+                floatOffset: Math.random() * Math.PI * 2,
+                floatSpeed: 0.4 + Math.random() * 0.5,
+                baseY: mesh.position.y
+            };
+
+            group.add(mesh);
+            meshes.push(mesh);
+        }
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) - 0.5;
+            mouseY = (e.clientY / window.innerHeight) - 0.5;
+        });
+
+        const clock = new THREE.Clock();
+        let rafId;
+
+        function animate() {
+            rafId = requestAnimationFrame(animate);
+            const t = clock.getElapsedTime();
+
+            meshes.forEach(mesh => {
+                mesh.rotation.x += mesh.userData.rotSpeedX;
+                mesh.rotation.y += mesh.userData.rotSpeedY;
+                mesh.position.y = mesh.userData.baseY +
+                    Math.sin(t * mesh.userData.floatSpeed + mesh.userData.floatOffset) * 1.5;
+            });
+
+            group.rotation.y += (mouseX * 0.3 - group.rotation.y) * 0.03;
+            group.rotation.x += (-mouseY * 0.2 - group.rotation.x) * 0.03;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        let resizeTimerBg;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimerBg);
+            resizeTimerBg = setTimeout(() => {
+                width = hero.clientWidth;
+                height = hero.clientHeight;
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+                renderer.setSize(width, height);
+            }, 200);
+        });
+
+        // Pause rendering when the hero section is off-screen to save battery/CPU
+        const heroObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    if (!rafId) animate();
+                } else {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+            });
+        }, { threshold: 0.05 });
+        heroObserver.observe(hero);
+
+    } catch (err) {
+        console.warn('3D hero background disabled:', err);
+    }
+}
+
+// Three.js is loaded with `defer`, so wait for full page load before using it
+window.addEventListener('load', initHeroBackground);
+
+console.log('Portfolio website loaded successfully with 3D effects!');

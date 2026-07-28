@@ -938,6 +938,137 @@ img {
     }
 }
 
+/* ============================
+   3D Effects
+   ============================ */
+
+/* Hero 3D canvas background (Three.js) */
+.hero {
+    perspective: 1500px;
+}
+
+.hero-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Perspective containers - the parent needs perspective,
+   the child (tilt-element) does the rotating */
+.hero-image,
+.about-image,
+.skills-grid,
+.projects-grid {
+    perspective: 1200px;
+}
+
+/* Tilt elements: rotated via JS based on mouse position */
+.tilt-element {
+    transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+/* Give the hero image depth: shapes & photo float at different Z depths
+   so the 3D tilt reveals real parallax between them */
+.image-wrapper {
+    transform-style: preserve-3d;
+}
+
+.image-wrapper img {
+    transform: translateZ(50px);
+}
+
+.shape {
+    transform: translateZ(var(--tz, 0px)) translateY(0);
+}
+
+.shape-1 {
+    --tz: 70px;
+}
+
+.shape-2 {
+    --tz: 25px;
+}
+
+.shape-3 {
+    --tz: 95px;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateZ(var(--tz, 0px)) translateY(0);
+    }
+    50% {
+        transform: translateZ(var(--tz, 0px)) translateY(-20px);
+    }
+}
+
+/* Remove the old flat hover-lift; JS now drives the full 3D transform */
+.skill-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.project-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.skill-card:hover .skill-icon {
+    transform: translateZ(30px) rotateY(360deg);
+    transition: transform 0.7s ease;
+}
+
+.skill-icon {
+    transform-style: preserve-3d;
+}
+
+/* Subtle 3D on the logo and buttons */
+.logo {
+    display: inline-block;
+    transform-style: preserve-3d;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: perspective(300px) rotateY(12deg);
+}
+
+.btn {
+    transform-style: preserve-3d;
+}
+
+.btn:active {
+    transform: translateY(1px) scale3d(0.97, 0.97, 0.97);
+}
+
+/* Give project images a touch of depth on hover */
+.project-image {
+    transform-style: preserve-3d;
+}
+
+.project-image img {
+    transform: translateZ(0);
+}
+
+/* No fine pointer (touch devices) or reduced motion: disable tilt/canvas entirely */
+@media (prefers-reduced-motion: reduce), (hover: none) {
+    .hero-canvas {
+        display: none;
+    }
+
+    .tilt-element {
+        transform: none !important;
+    }
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
     *,

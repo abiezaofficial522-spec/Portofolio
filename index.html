@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -32,6 +33,7 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
         <div class="hero-content">
             <div class="hero-text">
                 <p class="greeting">Halo Semua, saya</p>
@@ -44,7 +46,7 @@
                 </div>
             </div>
             <div class="hero-image">
-                <div class="image-wrapper">
+                <div class="image-wrapper tilt-element">
                     <div class="shape shape-1"></div>
                     <div class="shape shape-2"></div>
                     <div class="shape shape-3"></div>
@@ -59,7 +61,7 @@
         <div class="container">
             <h2 class="section-title">Tentang <span>Saya</span></h2>
             <div class="about-content">
-                <div class="about-image">
+                <div class="about-image tilt-element">
                     <img src="https://img.sanishtech.com/u/c58eb8a3f3797e2d941b72bdade2e50e.png" alt="About Photo">
                 </div>
                 <div class="about-text">
@@ -90,7 +92,7 @@
         <div class="container">
             <h2 class="section-title">Keterampilan <span>Saya</span></h2>
             <div class="skills-grid">
-                <div class="skill-card">
+                <div class="skill-card tilt-element">
                     <div class="skill-icon">
                         <i class="fab fa-html5"></i>
                     </div>
@@ -100,7 +102,7 @@
                     </div>
                     <span class="skill-percentage">60%</span>
                 </div>
-                <div class="skill-card">
+                <div class="skill-card tilt-element">
                     <div class="skill-icon">
                         <i class="fab fa-css3-alt"></i>
                     </div>
@@ -110,7 +112,7 @@
                     </div>
                     <span class="skill-percentage">60%</span>
                 </div>
-                <div class="skill-card">
+                <div class="skill-card tilt-element">
                     <div class="skill-icon">
                         <i class="fab fa-js"></i>
                     </div>
@@ -120,7 +122,7 @@
                     </div>
                     <span class="skill-percentage">50%</span>
                 </div>
-                <div class="skill-card">
+                <div class="skill-card tilt-element">
                     <div class="skill-icon">
                         <i class="fas fa-cut"></i>
                     </div>
@@ -130,7 +132,7 @@
                     </div>
                     <span class="skill-percentage">90%</span>
                 </div>
-                <div class="skill-card">
+                <div class="skill-card tilt-element">
                     <div class="skill-icon">
                         <i class="fas fa-video"></i>
                     </div>
@@ -140,7 +142,7 @@
                     </div>
                     <span class="skill-percentage">90%</span>
                 </div>
-                <div class="skill-card">
+                <div class="skill-card tilt-element">
                     <div class="skill-icon">
                         <i class="fas fa-camera"></i>
                     </div>
@@ -159,7 +161,7 @@
         <div class="container">
             <h2 class="section-title">Proyek <span>Saya</span></h2>
             <div class="projects-grid">
-                <div class="project-card">
+                <div class="project-card tilt-element">
                     <div class="project-image">
                         <img src="https://i.ibb.co.com/k660BFQH/image.png" alt="Project 1">
                         <div class="project-overlay">
@@ -177,7 +179,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="project-card">
+                <div class="project-card tilt-element">
                     <div class="project-image">
                         <img src="https://i.ibb.co.com/SDffV0jT/image.png" alt="Project 2">
                         <div class="project-overlay">
@@ -192,7 +194,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="project-card">
+                <div class="project-card tilt-element">
                     <div class="project-image">
                         <img src="https://i.ibb.co.com/HTb3xXNv/image.png" alt="Project 3">
                         <div class="project-overlay">
@@ -208,7 +210,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="project-card">
+                <div class="project-card tilt-element">
                     <div class="project-image">
                         <img src="https://i.ibb.co.com/YCwb7SG/image.png" alt="Project 4">
                         <div class="project-overlay">
@@ -226,7 +228,8 @@
                         </div>
                     </div>
                 </div>
-                
+            </div>
+        </div>
     </section>
 
     <!-- Contact Section -->
