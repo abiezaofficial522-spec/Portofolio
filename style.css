@@ -1,16 +1,19 @@
 /* CSS Variables */
 :root {
-    --primary-color: #b50000;
-    --primary-dark: #cd2626;
-    --secondary-color: #161516;
-    --dark-color: #1e293b;
-    --light-color: #f8fafc;
-    --gray-color: #64748b;
+    --primary-color: #ff4757;
+    --primary-dark: #b50000;
+    --secondary-color: #232028;
+    --dark-color: #f4f2f5;      /* teks utama (terang, karena bg sekarang gelap) */
+    --light-color: #0a090c;     /* bg halaman (gelap) */
+    --gray-color: #a9a3b2;
     --white: #ffffff;
-    --gradient: linear-gradient(135deg, #cd0000 0%, #222020 100%);
-    --shadow: 0 10px 30px rgba(205, 3, 3, 0.1);
-    --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
-    
+    --gradient: linear-gradient(135deg, #ff4757 0%, #b50000 100%);
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+    --shadow-hover: 0 20px 45px rgba(255, 71, 87, 0.25);
+    --glass-bg: rgba(255, 255, 255, 0.055);
+    --glass-bg-strong: rgba(10, 9, 12, 0.75);
+    --glass-border: rgba(255, 255, 255, 0.1);
+
     /* Fluid Typography */
     --font-size-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
     --font-size-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
@@ -21,7 +24,7 @@
     --font-size-3xl: clamp(1.875rem, 1.5rem + 1.875vw, 2.5rem);
     --font-size-4xl: clamp(2.25rem, 1.75rem + 2.5vw, 3rem);
     --font-size-5xl: clamp(2.5rem, 1.8rem + 3.5vw, 4rem);
-    
+
     /* Fluid Spacing */
     --space-xs: clamp(0.25rem, 0.2rem + 0.25vw, 0.5rem);
     --space-sm: clamp(0.5rem, 0.4rem + 0.5vw, 0.75rem);
@@ -30,7 +33,7 @@
     --space-xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);
     --space-2xl: clamp(3rem, 2rem + 5vw, 4rem);
     --space-3xl: clamp(4rem, 2.5rem + 7.5vw, 6rem);
-    
+
     /* Container */
     --container-max: min(1200px, 90vw);
     --container-padding: clamp(1rem, 2vw, 2rem);
@@ -54,6 +57,18 @@ body {
     background-color: var(--light-color);
     overflow-x: hidden;
     font-size: var(--font-size-base);
+}
+
+/* Canvas 3D persisten — fixed di belakang seluruh halaman */
+#bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    display: block;
+    background: radial-gradient(ellipse at 30% 20%, #1a1520 0%, #0a090c 55%, #060509 100%);
 }
 
 .container {
@@ -116,12 +131,12 @@ img {
 .btn-primary {
     background: var(--gradient);
     color: var(--white);
-    box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+    box-shadow: 0 5px 20px rgba(255, 71, 87, 0.4);
 }
 
 .btn-primary:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+    box-shadow: 0 10px 30px rgba(255, 71, 87, 0.5);
 }
 
 .btn-secondary {
@@ -142,11 +157,13 @@ img {
     top: 0;
     left: 0;
     width: 100%;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(10, 9, 12, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     z-index: 1000;
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.25);
     padding: clamp(0.75rem, 2vw, 1.25rem) 0;
+    border-bottom: 1px solid var(--glass-border);
 }
 
 .navbar .container {
@@ -200,7 +217,8 @@ img {
 .hamburger {
     display: none;
     cursor: pointer;
-    padding: 5px;
+    padding: 12px;
+    margin: -12px;
 }
 
 .hamburger span {
@@ -213,14 +231,14 @@ img {
     border-radius: 3px;
 }
 
-/* Hero Section */
+/* Hero Section — background transparan biar scene 3D kelihatan */
 .hero {
     min-height: 100vh;
     min-height: 100dvh;
     display: flex;
     align-items: center;
     padding: clamp(6rem, 12vw, 10rem) var(--container-padding) var(--space-2xl);
-    background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 100%);
+    background: transparent;
     position: relative;
     overflow: hidden;
 }
@@ -232,8 +250,9 @@ img {
     right: -20%;
     width: clamp(300px, 50vw, 600px);
     height: clamp(300px, 50vw, 600px);
-    background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 71, 87, 0.15) 0%, transparent 70%);
     border-radius: 50%;
+    pointer-events: none;
 }
 
 .hero-content {
@@ -330,7 +349,7 @@ img {
     background: var(--secondary-color);
     bottom: 20px;
     left: -20px;
-    opacity: 0.3;
+    opacity: 0.4;
     animation-delay: 1s;
 }
 
@@ -399,10 +418,10 @@ img {
     }
 }
 
-/* About Section */
+/* About Section — transparan, konten dibungkus panel kaca */
 .about {
     padding: var(--space-3xl) 0;
-    background: var(--white);
+    background: transparent;
 }
 
 .about-content {
@@ -416,6 +435,16 @@ img {
     width: 100%;
     border-radius: clamp(1rem, 3vw, 1.5rem);
     box-shadow: var(--shadow);
+    border: 1px solid var(--glass-border);
+}
+
+.about-text {
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    border-radius: clamp(1rem, 3vw, 1.5rem);
+    padding: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .about-text h3 {
@@ -458,7 +487,7 @@ img {
 /* Skills Section */
 .skills {
     padding: var(--space-3xl) 0;
-    background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 100%);
+    background: transparent;
 }
 
 .skills-grid {
@@ -468,7 +497,10 @@ img {
 }
 
 .skill-card {
-    background: var(--white);
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
     padding: var(--space-lg);
     border-radius: clamp(1rem, 2vw, 1.5rem);
     box-shadow: var(--shadow);
@@ -493,6 +525,7 @@ img {
 .skill-card:hover {
     transform: translateY(-10px);
     box-shadow: var(--shadow-hover);
+    border-color: rgba(255, 71, 87, 0.35);
 }
 
 .skill-card:hover::before {
@@ -517,7 +550,7 @@ img {
 .skill-progress {
     width: 100%;
     height: 8px;
-    background: #e2e8f0;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: var(--space-sm);
@@ -563,7 +596,7 @@ img {
 /* Projects Section */
 .projects {
     padding: var(--space-3xl) 0;
-    background: var(--white);
+    background: transparent;
 }
 
 .projects-grid {
@@ -573,7 +606,10 @@ img {
 }
 
 .project-card {
-    background: var(--light-color);
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
     border-radius: clamp(1rem, 3vw, 1.5rem);
     overflow: hidden;
     box-shadow: var(--shadow);
@@ -583,6 +619,7 @@ img {
 .project-card:hover {
     transform: translateY(-10px);
     box-shadow: var(--shadow-hover);
+    border-color: rgba(255, 71, 87, 0.35);
 }
 
 .project-image {
@@ -607,7 +644,7 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.75);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -630,7 +667,7 @@ img {
     justify-content: center;
     align-items: center;
     font-size: clamp(1rem, 2vw, 1.2rem);
-    color: var(--dark-color);
+    color: #161516;
     transition: all 0.3s ease;
 }
 
@@ -675,7 +712,7 @@ img {
 /* Contact Section */
 .contact {
     padding: var(--space-3xl) 0;
-    background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 100%);
+    background: transparent;
 }
 
 .contact-content {
@@ -683,6 +720,15 @@ img {
     grid-template-columns: 1fr 1.2fr;
     gap: clamp(2rem, 5vw, 4rem);
     align-items: start;
+}
+
+.contact-info {
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    border-radius: clamp(1rem, 3vw, 1.5rem);
+    padding: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .contact-info h3 {
@@ -736,7 +782,10 @@ img {
 .social-link {
     width: clamp(40px, 8vw, 50px);
     height: clamp(40px, 8vw, 50px);
-    background: var(--white);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -751,10 +800,14 @@ img {
     background: var(--gradient);
     color: var(--white);
     transform: translateY(-5px);
+    border-color: transparent;
 }
 
 .contact-form {
-    background: var(--white);
+    background: var(--glass-bg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
     padding: clamp(1.5rem, 4vw, 2.5rem);
     border-radius: clamp(1rem, 3vw, 1.5rem);
     box-shadow: var(--shadow);
@@ -768,7 +821,9 @@ img {
 .form-group textarea {
     width: 100%;
     padding: clamp(0.75rem, 2vw, 1rem) clamp(1rem, 2.5vw, 1.25rem);
-    border: 2px solid #e2e8f0;
+    border: 2px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--dark-color);
     border-radius: 10px;
     font-family: inherit;
     font-size: var(--font-size-base);
@@ -792,7 +847,10 @@ img {
 
 /* Footer */
 .footer {
-    background: var(--dark-color);
+    background: rgba(5, 5, 8, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--glass-border);
     color: var(--white);
     padding: var(--space-lg) 0;
     text-align: center;
@@ -871,12 +929,15 @@ img {
         top: clamp(50px, 12vw, 70px);
         left: -100%;
         width: 100%;
-        background: var(--white);
+        background: rgba(10, 9, 12, 0.98);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         flex-direction: column;
         padding: var(--space-lg);
         gap: var(--space-md);
         box-shadow: var(--shadow);
         transition: left 0.3s ease;
+        border-bottom: 1px solid var(--glass-border);
     }
 
     .nav-links.active {
@@ -938,134 +999,49 @@ img {
     }
 }
 
-/* ============================
-   3D Effects
-   ============================ */
-
-/* Hero 3D canvas background (Three.js) */
-.hero {
-    perspective: 1500px;
-}
-
-.hero-canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-}
-
-.hero-content {
-    position: relative;
-    z-index: 1;
-}
-
-/* Perspective containers - the parent needs perspective,
-   the child (tilt-element) does the rotating */
-.hero-image,
-.about-image,
-.skills-grid,
-.projects-grid {
-    perspective: 1200px;
-}
-
-/* Tilt elements: rotated via JS based on mouse position */
-.tilt-element {
-    transition: transform 0.15s ease-out, box-shadow 0.3s ease;
-    transform-style: preserve-3d;
-    will-change: transform;
-}
-
-/* Give the hero image depth: shapes & photo float at different Z depths
-   so the 3D tilt reveals real parallax between them */
-.image-wrapper {
-    transform-style: preserve-3d;
-}
-
-.image-wrapper img {
-    transform: translateZ(50px);
-}
-
-.shape {
-    transform: translateZ(var(--tz, 0px)) translateY(0);
-}
-
-.shape-1 {
-    --tz: 70px;
-}
-
-.shape-2 {
-    --tz: 25px;
-}
-
-.shape-3 {
-    --tz: 95px;
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translateZ(var(--tz, 0px)) translateY(0);
+/* Layar sangat kecil (HP lama / lipat) */
+@media (max-width: 360px) {
+    .about-text,
+    .contact-info,
+    .contact-form {
+        padding: var(--space-md);
     }
-    50% {
-        transform: translateZ(var(--tz, 0px)) translateY(-20px);
+
+    .skill-card,
+    .project-info {
+        padding: var(--space-md);
+    }
+
+    .hero-buttons .btn {
+        padding: 0.75rem 1.25rem;
     }
 }
 
-/* Remove the old flat hover-lift; JS now drives the full 3D transform */
-.skill-card:hover {
-    box-shadow: var(--shadow-hover);
-}
-
-.project-card:hover {
-    box-shadow: var(--shadow-hover);
-}
-
-.skill-card:hover .skill-icon {
-    transform: translateZ(30px) rotateY(360deg);
-    transition: transform 0.7s ease;
-}
-
-.skill-icon {
-    transform-style: preserve-3d;
-}
-
-/* Subtle 3D on the logo and buttons */
-.logo {
-    display: inline-block;
-    transform-style: preserve-3d;
-    transition: transform 0.3s ease;
-}
-
-.logo:hover {
-    transform: perspective(300px) rotateY(12deg);
-}
-
-.btn {
-    transform-style: preserve-3d;
-}
-
-.btn:active {
-    transform: translateY(1px) scale3d(0.97, 0.97, 0.97);
-}
-
-/* Give project images a touch of depth on hover */
-.project-image {
-    transform-style: preserve-3d;
-}
-
-.project-image img {
-    transform: translateZ(0);
-}
-
-/* No fine pointer (touch devices) or reduced motion: disable tilt/canvas entirely */
-@media (prefers-reduced-motion: reduce), (hover: none) {
-    .hero-canvas {
-        display: none;
+/* HP posisi landscape (layar pendek) — kurangin padding vertikal biar hero gak kepotong */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero {
+        min-height: auto;
+        padding-top: clamp(5rem, 10vh, 7rem);
+        padding-bottom: var(--space-lg);
     }
 
-    .tilt-element {
-        transform: none !important;
+    .hero-content {
+        gap: var(--space-md);
+    }
+
+    .about,
+    .skills,
+    .projects,
+    .contact {
+        padding: var(--space-xl) 0;
+    }
+}
+
+/* Layar besar / ultrawide — batasi lebar biar teks gak kepanjangan bacanya */
+@media (min-width: 1600px) {
+    .about-text p,
+    .contact-info > p {
+        max-width: 65ch;
     }
 }
 
